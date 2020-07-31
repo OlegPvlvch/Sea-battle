@@ -5,4 +5,5 @@ urlpatterns = [
     path('users/create/', views.UserCreateView.as_view(), name='user_create'),
     path('users/login/', views.LoginView.as_view(), name='login'),
     path('users/logout/', views.LogoutView.as_view(), name='logout'),
+    path('users/stat/', views.StatisticView.as_view(), name='stat'),
 ]

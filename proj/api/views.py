@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, logout
 from .serializers import UserSerializer
+from .models import UserStatistic
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -24,9 +25,17 @@ class LoginView(APIView):
 
 class LogoutView(APIView):
     def post(self, request,):
-        logout(request)
-        return Response({"message":"Logged out"})
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
 
-class UpdateStatisticView(APIView):
-    def post(self, request,):
+class StatisticView(APIView):
+    def get(self, request,):
+        user_stat = UserStatistic.objects.get(user=request.user)
+        return Response({
+            "user": request.user.username,
+            "games_count": user_stat.games_count,
+            "wins_count": user_stat.wins_count
+        })
+
+    def put(self, request,):
         pass

@@ -12,4 +12,4 @@ class UserStatistic(models.Model):
     wins_count = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.user.name + '. Statistic'
+        return self.user.username + '. Statistic'
