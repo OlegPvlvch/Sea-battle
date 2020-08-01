@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 from .models import UserStatistic
 
 
@@ -18,5 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         UserStatistic.objects.create(user=user)
-        Token.objects.create(user=user)
         return user
+
+# class UserStatisticSerializer(serializers.ModelSerializer):
+#     user = serializers.ReadOnlyField(source='user.username')
+#     class Meta:
+#         model = UserStatistic
+#         fields = ('user', 'games_count', 'wins_count')

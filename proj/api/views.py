@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import generics, status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, logout
+from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
 from .models import UserStatistic
 
@@ -18,6 +19,7 @@ class LoginView(APIView):
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
+        Token.objects.create(user=user)
         if user:
             return Response({"Token": user.auth_token.key})
         else:
