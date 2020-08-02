@@ -1,50 +1,54 @@
 import axios from 'axios';
+import authHeader from "../helpers/authHeader";
 
 
 const API_URL = 'http://127.0.0.1:8000/users/';
 
 
-export default class UserService{
-    constructor(){}
+export const userService = {
+    register,
+    login,
+    logout,
+    getStat,
+};
 
-    register(username, password){
-        axios.post(
-            `${API_URL}create/`, 
-            data={'username':username, 'password':password})
-        // Нужно получить объект res.data и вернуть его например
-        .then((res) => {console.log(res.data); return res.data})
-        .catch((err) => {console.log(err.message, err.response.data)});
-    }
-
-    login(username, password){
-        axios.post(
-            `${API_URL}login/`,
-            data={'username':username, 'password':password})
-        .then((res) => {return res.data})
-
-        .then((res_data) => {
-            if(res_data.token){
-                localStorage.setItem('Token', res_data.token);
-            }
-        })
-        .catch((err) => {console.log(err.message, err.response.data)});
-    }
-
-    logout(){
-        axios.post(
-            `${API_URL}logout/`,
-            headers = getAuthHeader()
-        )
-        .then(res => res.data)
-        .catch(err => {console.log(err.message)});
-        localStorage.removeItem("Token");
-    }
-
-    getStat(){}
+function register(username, password){
+    axios({
+        method: 'post',
+        url: `${API_URL}create/`,
+        data: {
+            'username':username,
+            'password':password,
+        }
+    })
+    .then((res) => console.log(res.data))
+    .catch((err) => {console.log(err.message)});
 }
 
-function getAuthHeader(){
-    return {
-        "Authorization":"Token "+localStorage.getItem('Token')
-    };
+function login(username, password){
+    axios({
+        method: 'post',
+        url: `${API_URL}login/`,
+        data: {
+            'username':username,
+            'password':password,
+        }
+    })
+    .then((res) => {
+        if(res.data.token){
+            localStorage.setItem('Token', res.data.token);
+        }
+    })
 }
+
+function logout(){
+    axios({
+        method: 'post',
+        url: `${API_URL}logout/`,
+        headers: authHeader(),
+    })
+    .catch(err => {console.log(err.message)});
+    localStorage.removeItem("Token");
+}
+
+function getStat(){}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { userService } from '../services/userService';
 
 
 export default class Auth extends React.Component{
@@ -25,6 +26,9 @@ export default class Auth extends React.Component{
         if(!(username && password)){
             return;
         }
+        else{
+            userService.login(username, password);
+        }
 
         //auth...
     }
@@ -44,7 +48,7 @@ export default class Auth extends React.Component{
                     <input type="password" className="form-control" name="password" onChange={(e) => this.handleChange(e)}></input>
                 </div>
                 <div className="form-group">
-                    <button className="btn">Sign up</button>
+                    <button className="btn btn-primary">Sign in</button>
                 </div>
              </form>
              <Link to="/register">Don't have an account?</Link>

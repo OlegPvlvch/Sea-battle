@@ -7,12 +7,12 @@ function Square(props){
     let marker;
     if(isVisible){
       if(containsShip) marker = 'X';
-      else marker = 'o';
+      else marker = '•';
     }
     else marker = '';
   
     return (
-      <button id={x+y} className={"square"} onClick={props.onClick}>
+      <button id={`${y}-${x}`} className={"square"} onClick={props.onClick}>
         {marker}
       </button>
     );

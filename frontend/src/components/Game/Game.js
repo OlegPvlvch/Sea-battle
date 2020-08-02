@@ -9,12 +9,18 @@ class Game extends React.Component {
       this.state = {
         playerField: [],
         playerShips: [],
+        
         enemyField: [],
         //enemyShips: [],
-        gameStarted: false,
+        gameStarted: true,
         gameOver: false,
       };
-  
+      this.shipsData = [
+        [1, 4, 'fourdeck'],
+        [2, 3, 'threedeck'],
+        [3, 2, 'twodeck'],
+        [4, 1, 'onedeck'],
+      ]
       start_fill(this.state.enemyField);
       start_fill(this.state.playerField);
     }
@@ -30,15 +36,15 @@ class Game extends React.Component {
       }
     }
   
-    setShips(y, x){
-      if(!this.state.gameStarted){
-        let field = this.state.playerField.slice();
-        field[y][x].containsShip = true;
-        this.setState({
-          playerField: field,
-        })
-      }
-    }
+    // setShips(y, x){
+    //   if(!this.state.gameStarted){
+    //     let field = this.state.playerField.slice();
+    //     field[y][x].containsShip = true;
+    //     this.setState({
+    //       playerField: field,
+    //     })
+    //   }
+    // }
   
     render(){
       

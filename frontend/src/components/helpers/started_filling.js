@@ -7,7 +7,7 @@ export default(field = []) => {
         field[i].push({
             x: j,
             y: i,
-            containsShip: true,
+            containsShip: false,
             isVisible: false,
         });
       }
