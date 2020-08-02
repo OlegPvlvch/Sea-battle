@@ -8,44 +8,43 @@ export default class UserService{
     constructor(){}
 
     register(username, password){
-        let data = {};
         axios.post(
             `${API_URL}create/`, 
             data={'username':username, 'password':password})
-        .then(res => {data = res.data})
-        .catch(err => {console.log(err)});
-
-        if(data) return data;
-
-        return;
+        // Нужно получить объект res.data и вернуть его например
+        .then((res) => {console.log(res.data); return res.data})
+        .catch((err) => {console.log(err.message, err.response.data)});
     }
 
     login(username, password){
-        let data = {};
         axios.post(
             `${API_URL}login/`,
             data={'username':username, 'password':password})
-        .then(res => {data = res.data})
-        .catch(err => {console.log(err)});
-        if(data.get('Token')){
-            localStorage.setItem('Token', data['Token']);
-        }
-        //return data;
+        .then((res) => {return res.data})
+
+        .then((res_data) => {
+            if(res_data.token){
+                localStorage.setItem('Token', res_data.token);
+            }
+        })
+        .catch((err) => {console.log(err.message, err.response.data)});
     }
 
     logout(){
-        const token = localStorage.getItem('Token');
-        const headers = {
-            "Authorization":"Token "+token,
-        }
         axios.post(
             `${API_URL}logout/`,
-            headers=headers
+            headers = getAuthHeader()
         )
         .then(res => res.data)
-        .catch(err => {console.log(err)});
+        .catch(err => {console.log(err.message)});
         localStorage.removeItem("Token");
     }
-    
+
     getStat(){}
+}
+
+function getAuthHeader(){
+    return {
+        "Authorization":"Token "+localStorage.getItem('Token')
+    };
 }

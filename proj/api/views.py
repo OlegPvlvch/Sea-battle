@@ -21,7 +21,10 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         Token.objects.create(user=user)
         if user:
-            return Response({"Token": user.auth_token.key})
+            return Response({
+                "user": user.username,
+                "token": user.auth_token.key,
+            })
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
