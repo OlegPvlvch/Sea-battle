@@ -1,21 +1,25 @@
 import React from 'react';
 
 
-function Square(props){
-    const {x, y, containsShip, isVisible} = props;
+export default function Square(props){
+    const {x, y, containsShip, isVisible, shot} = props;
   
     let marker;
-    if(isVisible){
-      if(containsShip) marker = 'X';
+
+    if(shot){
+      if(containsShip){
+        marker = 'X';
+      }
       else marker = '•';
     }
-    else marker = '';
-  
+    else{
+      if(isVisible && containsShip) marker = '☐';
+      else marker = '';
+    }
+
     return (
-      <button id={`${y}-${x}`} className={"square"} onClick={props.onClick}>
+      <button id={`${x}-${y}`} className={"square"} onClick={props.onClick}>
         {marker}
       </button>
     );
   }
-
-export default Square;

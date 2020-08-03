@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { userService } from '../services/userService';
 
 
@@ -9,6 +9,8 @@ export default class Auth extends React.Component{
         this.state = {
             username: '',
             password: '',
+            error: '',
+            isLoggenIn: Boolean(localStorage.getItem('user')),
         };
     }
 
@@ -24,20 +26,38 @@ export default class Auth extends React.Component{
         const password = this.state.password;
 
         if(!(username && password)){
-            return;
+            this.setState({
+                error: 'Invalid data',
+            })
         }
         else{
-            userService.login(username, password);
+            userService.login(username, password)
+            .then(() => {
+                this.setState({
+                    isLoggenIn: true,
+                })
+            })
+            .catch((err) => {
+                if(err.response.status === 500){
+                    this.setState({
+                        error: 'You are already logged in. Please log out.', //err.response.data,
+                        isLoggenIn: false,
+                    })
+                }
+            });
         }
-
-        //auth...
     }
 
     render(){
         return(
             
-            <div className="col-md-6 col-md-offset-3">
+            <div className="cos-xs-12 col-sm-10 col-md-6">
+             {this.state.isLoggenIn ? (
+                 <Redirect to='/game' />
+             ) : (
+             <div>
              <h4>Sign in</h4><hr />
+             <p>{this.state.error}</p>
              <form onSubmit={(e) => this.handleSubmit(e)}>
                 <div className="form-group">
                     <label htmlFor="username">Username</label>
@@ -52,6 +72,8 @@ export default class Auth extends React.Component{
                 </div>
              </form>
              <Link to="/register">Don't have an account?</Link>
+             </div>
+             )}
             </div>
         )
     }

@@ -13,7 +13,7 @@ export const userService = {
 };
 
 function register(username, password){
-    axios({
+    return axios({
         method: 'post',
         url: `${API_URL}create/`,
         data: {
@@ -21,12 +21,12 @@ function register(username, password){
             'password':password,
         }
     })
-    .then((res) => console.log(res.data))
-    .catch((err) => {console.log(err.message)});
+    //.then((res) => console.log(res.data))
+    //.catch((err) => {return err.message});
 }
 
 function login(username, password){
-    axios({
+    return axios({
         method: 'post',
         url: `${API_URL}login/`,
         data: {
@@ -36,6 +36,7 @@ function login(username, password){
     })
     .then((res) => {
         if(res.data.token){
+            localStorage.setItem('User', username);
             localStorage.setItem('Token', res.data.token);
         }
     })
@@ -47,8 +48,12 @@ function logout(){
         url: `${API_URL}logout/`,
         headers: authHeader(),
     })
-    .catch(err => {console.log(err.message)});
-    localStorage.removeItem("Token");
+    .then(() => {
+        localStorage.removeItem("User");
+        localStorage.removeItem("Token");
+    })
+    //.catch(err => {console.log(err.message)});
+    //localStorage.removeItem("Token");
 }
 
 function getStat(){}

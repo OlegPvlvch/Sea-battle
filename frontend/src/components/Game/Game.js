@@ -1,70 +1,78 @@
 import React from 'react';
 import Field from './Field';
-import start_fill from '../helpers/started_filling';
+import getEmptyField from '../helpers/getEmptyField';
+import getShipSet from '../helpers/getShipSet'
+//import checkAvailableCells from '../helpers/checkAvailableCells';
 
 
-class Game extends React.Component {
+export default class Game extends React.Component {
     constructor(props) {
       super(props);
+      this.size = 10;
+      this.shipsData = [
+        //amount, length, name
+        [1, 4, 'fourdeck'], [2, 3, 'threedeck'],
+        [3, 2, 'twodeck'], [4, 1, 'onedeck'],
+      ];
       this.state = {
-        playerField: [],
-        playerShips: [],
+        playerField: getEmptyField(this.size),
+        playerShips: getShipSet(this.shipsData),
+
+        currentIndex: 0,
+        availableCells: [],
         
-        enemyField: [],
+        enemyField: getEmptyField(this.size),
         //enemyShips: [],
-        gameStarted: true,
+        gameStarted: false, 
         gameOver: false,
       };
-      this.shipsData = [
-        [1, 4, 'fourdeck'],
-        [2, 3, 'threedeck'],
-        [3, 2, 'twodeck'],
-        [4, 1, 'onedeck'],
-      ]
-      start_fill(this.state.enemyField);
-      start_fill(this.state.playerField);
+      console.log(this.state.playerShips)
     }
   
-    handleClick(y, x){
+    handleClick(i, j){
       if(this.state.gameStarted){
         let field = this.state.enemyField.slice();
-        if(!field[y][x].isVisible)
-          field[y][x].isVisible = true;
+        if(!field[i][j].shot)
+          field[i][j].shot = true;
           this.setState({
             enemyField: field,
           })
       }
     }
-  
-    // setShips(y, x){
-    //   if(!this.state.gameStarted){
-    //     let field = this.state.playerField.slice();
-    //     field[y][x].containsShip = true;
-    //     this.setState({
-    //       playerField: field,
-    //     })
-    //   }
-    // }
+
+    setShips(i, j){
+      if(!this.state.gameStarted){
+        let field = this.state.playerField.slice();
+        //field[i][j].isVisible = true;
+        //field[i][j].containsShip = true;
+        this.setState({
+          playerField: field,
+        });
+        //----
+      }
+    }
   
     render(){
       
       return (
-        <div>
-        <div className="game">
-          <Field whose={"Player"} 
-            fieldMap={this.state.playerField}
-            //onClick={(y, x) => this.setShips(y, x)} 
-          />
-        </div>
-        <div className="game">
-          <Field whose={"Enemy"}
-            fieldMap={this.state.enemyField}
-            onClick={(y, x) => this.handleClick(y, x)}
-          />
-        </div>
+        <div className="row">
+          <div className="col-sm-12 col-md-12 col-lg-6">
+            <div className="game">
+              <Field whose={localStorage.getItem('User') || 'Player'} 
+                fieldMap={this.state.playerField}
+                onClick={(i, j) => this.setShips(i, j)} 
+              />
+            </div>
+          </div>
+          <div className="col-sm-12 col-md-12 col-lg-6">
+            <div className="game">
+              <Field whose={"Enemy"}
+                fieldMap={this.state.enemyField}
+                onClick={(i, j) => this.handleClick(i, j)}
+              />
+            </div>
+          </div>
         </div>
       );
     }
   }
-
-export default Game;

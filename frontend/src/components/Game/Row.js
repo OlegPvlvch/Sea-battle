@@ -2,7 +2,7 @@ import React from 'react';
 import Square from './Square'
 
 
-function Row(props) {
+export default function Row(props) {
     const { row } = props;
     return (
         <div className=".board-row">
@@ -13,13 +13,12 @@ function Row(props) {
                     x={square.x} 
                     y={square.y} 
                     containsShip={square.containsShip}
-                    isVisible={square.isVisible} 
-                    onClick={() => props.onClick(square.y, square.x)} 
+                    isVisible={square.isVisible}
+                    shot={square.shot} 
+                    onClick={() => props.onClick(square.x, square.y)} 
                     />
                 )
             })}
         </div>
         )
 }
-
-export default Row;
