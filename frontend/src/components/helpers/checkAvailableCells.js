@@ -29,7 +29,7 @@ export default (field, x, y, ship) => {
     //     }
     // }
     if(ship.matrix.length === 2){
-        ship.matrix[0].x === ship.matrix[1].x ? 
+        ship.matrix[0][0] === ship.matrix[1][0] ? 
         ship.setHorizontal(1) : ship.setHorizontal(0);
     }
 
@@ -41,8 +41,9 @@ export default (field, x, y, ship) => {
     }
     else{
         for(let row of rows){
-            if(row.length === ship.decks-1){
-                cells.push(row);
+            row = row.slice(0, row.length - ship.matrix.length+1)
+            if(row.length === ship.decks - ship.matrix.length){
+                cells = cells.concat(row);
             }
         }
     }

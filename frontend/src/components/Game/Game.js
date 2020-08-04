@@ -4,6 +4,8 @@ import getEmptyField from '../helpers/getEmptyField';
 import getShipSet from '../helpers/getShipSet'
 //import checkAvailableCells from '../helpers/checkAvailableCells';
 
+import Logout from '../Users/Logout';
+
 
 export default class Game extends React.Component {
     constructor(props) {
@@ -55,6 +57,10 @@ export default class Game extends React.Component {
     render(){
       
       return (
+        <div className="container">
+        <div class="nav">
+          <Logout />
+        </div>
         <div className="row">
           <div className="col-sm-12 col-md-12 col-lg-6">
             <div className="game">
@@ -72,6 +78,7 @@ export default class Game extends React.Component {
               />
             </div>
           </div>
+        </div>
         </div>
       );
     }

@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from "../helpers/authHeader";
 
-
-const API_URL = 'http://127.0.0.1:8000/users/';
-
+const axiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8000/users/'
+});
 
 export const userService = {
     register,
@@ -13,22 +13,20 @@ export const userService = {
 };
 
 function register(username, password){
-    return axios({
+    return axiosInstance({
         method: 'post',
-        url: `${API_URL}create/`,
+        url: 'create/',
         data: {
             'username':username,
             'password':password,
         }
     })
-    //.then((res) => console.log(res.data))
-    //.catch((err) => {return err.message});
 }
 
 function login(username, password){
-    return axios({
+    return axiosInstance({
         method: 'post',
-        url: `${API_URL}login/`,
+        url: 'login/',
         data: {
             'username':username,
             'password':password,
@@ -43,9 +41,9 @@ function login(username, password){
 }
 
 function logout(){
-    axios({
+    axiosInstance({
         method: 'post',
-        url: `${API_URL}logout/`,
+        url: 'logout/',
         headers: authHeader(),
     })
     .then(() => {
@@ -56,4 +54,10 @@ function logout(){
     //localStorage.removeItem("Token");
 }
 
-function getStat(){}
+function getStat(){
+    return axiosInstance({
+        method: 'get',
+        url: 'stat/',
+        headers: authHeader()
+    })
+}
