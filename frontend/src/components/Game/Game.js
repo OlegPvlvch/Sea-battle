@@ -2,9 +2,9 @@ import React from 'react';
 import Field from './Field';
 import getEmptyField from '../helpers/getEmptyField';
 import getShipSet from '../helpers/getShipSet'
-//import checkAvailableCells from '../helpers/checkAvailableCells';
-
 import Logout from '../Users/Logout';
+//import checkAvailableCells from '../helpers/checkAvailableCells';
+import webSocketService from '../services/webSocketService';
 
 
 export default class Game extends React.Component {
@@ -20,15 +20,22 @@ export default class Game extends React.Component {
         playerField: getEmptyField(this.size),
         playerShips: getShipSet(this.shipsData),
 
-        currentIndex: 0,
-        availableCells: [],
+        current: 0,
+        //availableCells: [],
         
         enemyField: getEmptyField(this.size),
         //enemyShips: [],
         gameStarted: false, 
         gameOver: false,
       };
-      console.log(this.state.playerShips)
+    }
+
+    componentDidMount(){
+      this.webSocketServ = new webSocketService();
+      this.webSocketServ.connect('room');
+    }
+    componentWillUnmount(){
+      this.webSocketServ.disconnect();
     }
   
     handleClick(i, j){
@@ -45,12 +52,38 @@ export default class Game extends React.Component {
     setShips(i, j){
       if(!this.state.gameStarted){
         let field = this.state.playerField.slice();
-        //field[i][j].isVisible = true;
-        //field[i][j].containsShip = true;
+        let ships = this.state.playerShips.slice();//[ind];
+        let ind = this.state.current;
+
+        if(ind > this.state.playerShips.length - 1){
+          this.setState({
+            gameStarted: true,
+          });
+          return;
+        }
+        if(field[i][j].containsShip || field[i][j].isOccupied) return;
+        // if(ships[ind].matrix !== []){
+        //   if(ships[ind].matrix.length === 2){
+        //     ships[ind].matrix[0][0] === ships[ind].matrix[1][0] ? 
+        //     ships[ind].setHorizontal(1) : ships[ind].setHorizontal(0);
+        //   }
+        // }
+        ships[ind].matrix.push([i,j]);
+        // let cells = checkAvailableCells(this.state.playerField, i, j, ships[ind]);
+        field[i][j].containsShip = true;
+        field[i][j].isVisible = true;
         this.setState({
           playerField: field,
+          playerShips: ships,
         });
-        //----
+        if(this.state.playerShips[ind].matrix.length === this.state.playerShips[ind].decks){
+          this.setState({
+            current: ind+1,
+          })
+        }
+        
+        console.log(ships[ind]);
+        // console.log(cells);
       }
     }
   
@@ -58,7 +91,7 @@ export default class Game extends React.Component {
       
       return (
         <div className="container">
-        <div class="nav">
+        <div className="nav">
           <Logout />
         </div>
         <div className="row">

@@ -45,13 +45,9 @@ function logout(){
         method: 'post',
         url: 'logout/',
         headers: authHeader(),
-    })
-    .then(() => {
-        localStorage.removeItem("User");
-        localStorage.removeItem("Token");
-    })
-    //.catch(err => {console.log(err.message)});
-    //localStorage.removeItem("Token");
+    });
+    localStorage.removeItem("User");
+    localStorage.removeItem("Token");
 }
 
 function getStat(){

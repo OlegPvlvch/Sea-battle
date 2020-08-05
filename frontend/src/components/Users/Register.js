@@ -43,12 +43,6 @@ export default class Register extends React.Component{
                     error: err.message,
                 })
             });
-            
-            // userService.register(username, password2);
-            // this.setState({
-            //     error: '',
-            //     registerSuccess: true,
-            // });
         }
     }
 

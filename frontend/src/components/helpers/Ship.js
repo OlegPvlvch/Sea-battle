@@ -5,7 +5,6 @@ export default class Ship{
         this.horizontal = -1;
         this.x0			= 0;
         this.y0			= 0;
-        // массив с координатами палуб корабля
         this.matrix		= [];
     }
 

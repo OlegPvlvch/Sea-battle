@@ -12,6 +12,7 @@ class App extends Component {
   render() {
     return (
       <Router>
+              {/*  component={()=><Page prop={} /> } */}
         <PrivateRoute path="/game" component={Game} />
         <Route path="/register" component={Register} />
         <Route exact path="/login" component={Login} />

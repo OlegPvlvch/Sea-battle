@@ -13,3 +13,7 @@ class UserStatistic(models.Model):
 
     def __str__(self):
         return self.user.username + '. Statistic'
+
+
+class Game(models.Model):
+    pass

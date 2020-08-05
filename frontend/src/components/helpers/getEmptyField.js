@@ -1,4 +1,4 @@
-export default(size = 10) => {
+export default(size) => {
     let field = [];
     for(let i=0;i<size;i++){
       field.push([]);
@@ -8,6 +8,7 @@ export default(size = 10) => {
             y: j,
             containsShip: false,
             isVisible: false,
+            isOccupied: false,
             shot: false,
         });
       }

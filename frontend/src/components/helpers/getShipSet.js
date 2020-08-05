@@ -8,7 +8,7 @@ export default (shipsData) => {
             shipSet.push(
                 new Ship({
                     shipname: ship[2] + String(j+1),
-                    decks: ship[1]
+                    decks: ship[1],
                 })
             );
         }
