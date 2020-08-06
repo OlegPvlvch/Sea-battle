@@ -7,16 +7,16 @@ export default (field, x, y, ship) => {
     for(let i=1; i<ship.decks; i++){
 
         if(field[x-i] && !field[x-i][y].containsShip){
-            rows[0].push([x-i, y]);//push(field[x-i][y]);
+            rows[0].push([x-i, y]);
         }
         if(field[x][y+i] && !field[x][y+i].containsShip){
-            rows[1].push([x, y+i]);//push(field[x][y+i]);
+            rows[1].push([x, y+i]);
         }
         if(field[x+i] && !field[x+i][y].containsShip){
-            rows[2].push([x+i, y]);//push(field[x+i][y]);
+            rows[2].push([x+i, y]);
         }
         if(field[x][y-i] && !field[x][y-i].containsShip){
-            rows[3].push([x, y-i]);//push(field[x][y-i]);
+            rows[3].push([x, y-i]);
         }
         
     }

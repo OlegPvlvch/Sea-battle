@@ -6,4 +6,7 @@ urlpatterns = [
     path('users/login/', views.LoginView.as_view(), name='login'),
     path('users/logout/', views.LogoutView.as_view(), name='logout'),
     path('users/stat/', views.StatisticView.as_view(), name='stat'),
+    path('games/', views.GameListView.as_view()),
+    path('games/<int:pk>/', views.GameRetrieveView.as_view()),
+    path('games/create/', views.GameCreateView.as_view()),
 ]

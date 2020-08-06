@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserStatistic
+from .models import UserStatistic, Game
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,8 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         UserStatistic.objects.create(user=user)
         return user
 
-# class UserStatisticSerializer(serializers.ModelSerializer):
-#     user = serializers.ReadOnlyField(source='user.username')
-#     class Meta:
-#         model = UserStatistic
-#         fields = ('user', 'games_count', 'wins_count')
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ('id', 'size')

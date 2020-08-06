@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import UserStatistic
+from . import models
 
 
-admin.register(UserStatistic)
+admin.register(models.UserStatistic)
+admin.register(models.Game)
+admin.register(models.Field)

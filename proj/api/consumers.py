@@ -1,11 +1,12 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from api.models import Game
 
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.game_room = self.scope['url_route']['kwargs']['room_name']
-        #self.game_room = self.scope['user'].username
+        self.status = ''
         await self.channel_layer.group_add(
             self.game_room, self.channel_name
         )

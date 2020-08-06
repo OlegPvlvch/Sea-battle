@@ -2,19 +2,21 @@ import React from 'react';
 import Field from './Field';
 import getEmptyField from '../helpers/getEmptyField';
 import getShipSet from '../helpers/getShipSet'
-import Logout from '../Users/Logout';
-//import checkAvailableCells from '../helpers/checkAvailableCells';
 import webSocketService from '../services/webSocketService';
+//import { gameService } from '../services/gameService';
 
 
 export default class Game extends React.Component {
     constructor(props) {
       super(props);
+      this.room_id = props.match.params.room_id;
       this.size = 10;
+       
       this.shipsData = [
-        //amount, length, name
-        [1, 4, 'fourdeck'], [2, 3, 'threedeck'],
-        [3, 2, 'twodeck'], [4, 1, 'onedeck'],
+        [1, 4, 'fourdeck'], 
+        [2, 3, 'threedeck'],
+        [3, 2, 'twodeck'], 
+        [4, 1, 'onedeck'],
       ];
       this.state = {
         playerField: getEmptyField(this.size),
@@ -32,7 +34,7 @@ export default class Game extends React.Component {
 
     componentDidMount(){
       this.webSocketServ = new webSocketService();
-      this.webSocketServ.connect('room');
+      this.webSocketServ.connect(this.room_id);
     }
     componentWillUnmount(){
       this.webSocketServ.disconnect();
@@ -83,7 +85,6 @@ export default class Game extends React.Component {
         }
         
         console.log(ships[ind]);
-        // console.log(cells);
       }
     }
   
@@ -91,9 +92,6 @@ export default class Game extends React.Component {
       
       return (
         <div className="container">
-        <div className="nav">
-          <Logout />
-        </div>
         <div className="row">
           <div className="col-sm-12 col-md-12 col-lg-6">
             <div className="game">

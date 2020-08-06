@@ -53,7 +53,7 @@ export default class Auth extends React.Component{
             
             <div className="cos-xs-12 col-sm-10 col-md-6">
              {this.state.isLoggenIn ? (
-                 <Redirect to='/game' />
+                 <Redirect to='/games' />
              ) : (
              <div>
              <h4>Sign in</h4><hr />

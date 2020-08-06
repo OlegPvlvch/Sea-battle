@@ -25,8 +25,8 @@ export default class Statistic extends React.Component{
 
     render(){
         return (
-            <div class="row">
-              <div class="col">
+            <div className="row">
+              <div className="col">
                 <h3>{this.state.username}</h3> <hr />
                 <p>Games: {this.state.games_count}</p>
                 <p>Wins: {this.state.wins_count}</p>
