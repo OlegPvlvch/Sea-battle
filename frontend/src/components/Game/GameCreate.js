@@ -25,7 +25,7 @@ export default class CreateGame extends React.Component{
         room_id: res.data.room_id,
         succes: true,
       });
-      window.location.assign(`room/${this.state.room_id}`)
+      window.location.replace(`room/${this.state.room_id}`)
     })
     .catch((err) => {
       console.log(err.message);

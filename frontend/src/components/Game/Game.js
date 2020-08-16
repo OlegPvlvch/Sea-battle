@@ -3,7 +3,7 @@ import Field from './Field';
 import getEmptyField from '../helpers/getEmptyField';
 import getShipSet from '../helpers/getShipSet'
 import webSocketService from '../services/webSocketService';
-//import { gameService } from '../services/gameService';
+import { gameService } from '../services/gameService';
 
 
 export default class Game extends React.Component {
@@ -11,37 +11,47 @@ export default class Game extends React.Component {
       super(props);
       this.room_id = props.match.params.room_id;
       this.size = 10;
-       
+      this.webSocketServ = null;
       this.shipsData = [
         [1, 4, 'fourdeck'], 
         [2, 3, 'threedeck'],
         [3, 2, 'twodeck'], 
         [4, 1, 'onedeck'],
       ];
+
       this.state = {
-        playerField: getEmptyField(this.size),
+        playerField: [],
         playerShips: getShipSet(this.shipsData),
 
         current: 0,
         //availableCells: [],
         
-        enemyField: getEmptyField(this.size),
+        enemyField: [],
         //enemyShips: [],
-        gameStarted: false, 
+        isReady: false, 
         gameOver: false,
       };
     }
 
     componentDidMount(){
+      gameService.getGameInfo(this.room_id)
+      .then((res) => {
+          this.size = res.data.size;
+          this.setState({
+            playerField: getEmptyField(this.size),
+            enemyField: getEmptyField(this.size),
+          })
+      })
       this.webSocketServ = new webSocketService();
       this.webSocketServ.connect(this.room_id);
     }
+    
     componentWillUnmount(){
       this.webSocketServ.disconnect();
     }
   
     handleClick(i, j){
-      if(this.state.gameStarted){
+      if(this.state.isReady){
         let field = this.state.enemyField.slice();
         if(!field[i][j].shot)
           field[i][j].shot = true;
@@ -52,14 +62,15 @@ export default class Game extends React.Component {
     }
 
     setShips(i, j){
-      if(!this.state.gameStarted){
+      this.webSocketServ.sendGameData({'message': 'hey' });
+      if(!this.state.isReady){
         let field = this.state.playerField.slice();
         let ships = this.state.playerShips.slice();//[ind];
         let ind = this.state.current;
 
         if(ind > this.state.playerShips.length - 1){
           this.setState({
-            gameStarted: true,
+            isReady: true,
           });
           return;
         }
@@ -113,4 +124,4 @@ export default class Game extends React.Component {
         </div>
       );
     }
-  }
+}

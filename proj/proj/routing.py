@@ -1,14 +1,14 @@
-from channels.auth import AuthMiddlewareStack
+from proj.middlewares import TokenAuthMiddlewareStack
+
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import re_path, path
 from api import consumers
 
 
 application = ProtocolTypeRouter({
-    'websocket' : AuthMiddlewareStack(
+    'websocket' : TokenAuthMiddlewareStack(
         URLRouter([
-            #path('ws/<str:room_name>/', consumers.GameConsumer),
-            re_path(r'^ws/(?P<room_name>[^/]+)/$', consumers.GameConsumer),
+            re_path(r'^ws/(?P<room_id>[^/]+)/$', consumers.GameConsumer),
         ])
     ),
 })

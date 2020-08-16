@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField, JSONField
 
 
+#remove
 class UserStatistic(models.Model):
     user = models.OneToOneField(
         User, 
@@ -17,18 +18,20 @@ class UserStatistic(models.Model):
 
 class Game(models.Model):
     STATUS_CHOICES = (
-        ('av', 'available'),
-        ('st', 'started'),
-        ('en', 'ended'),
+        ('available', 'available'),
+        ('not_available', 'not_available'),
+        ('started', 'started'),
+        ('ended', 'ended'),
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='is_av',
+        default='available',
     )
     size = models.IntegerField(default=10)
 
+#migrate
 class Field(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    fieldmap = ArrayField(ArrayField(JSONField()))
+    fieldmap = JSONField(default=list)

@@ -8,5 +8,8 @@ urlpatterns = [
     path('users/stat/', views.StatisticView.as_view(), name='stat'),
     path('games/', views.GameListView.as_view()),
     path('games/<int:pk>/', views.GameRetrieveView.as_view()),
+    
+    path('games/<int:pk>/join/', views.GameJoinView.as_view()),
+    
     path('games/create/', views.GameCreateView.as_view()),
 ]

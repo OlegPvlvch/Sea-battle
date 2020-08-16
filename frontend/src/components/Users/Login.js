@@ -44,6 +44,12 @@ export default class Auth extends React.Component{
                         isLoggenIn: false,
                     })
                 }
+                else if(err.response.status === 400){
+                    this.setState({
+                        error: 'Invalid data',
+                        isLoggenIn: false,
+                    })
+                }
             });
         }
     }

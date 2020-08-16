@@ -1,6 +1,6 @@
 from rest_framework import views, generics, status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate, logout
+from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, GameSerializer
 from .models import UserStatistic, Game, Field
@@ -12,6 +12,7 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 class LoginView(views.APIView):
+    authentication_classes = ()
     permission_classes = ()
 
     def post(self, request,):
@@ -46,14 +47,14 @@ class GameListView(generics.ListAPIView):
     model = serializer_class.Meta.model
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(status="is_av")
+        queryset = self.model.objects.filter(status="available")
         return queryset
 
 class GameCreateView(views.APIView):
     def post(self, request,):
         size = request.data.get('size')
         g = Game.objects.create(size=size)
-        Field.objects.create(user=request.user, game=g, fieldmap=[])
+        Field.objects.create(user=request.user, game=g)
         return Response({
             "room_id" : g.id,
         })
@@ -61,3 +62,22 @@ class GameCreateView(views.APIView):
 class GameRetrieveView(generics.RetrieveAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+class GameJoinView(views.APIView):
+    def post(self, request, pk,):
+        g = Game.objects.get(id=pk)
+        f = g.field_set.filter(user=request.user).first()
+        if f:
+            return Response({
+                'error': 'You are already joined'
+            }, status=status.HTTP_403_FORBIDDEN)
+        if g.status == 'available':
+            Field.objects.create(user=request.user, game=g)
+            g.status = 'not_available'
+            g.save()
+            return Response({
+                "room_id": g.id,
+            })
+        return Response({
+            'error': 'Room is not available'
+        }, status=status.HTTP_403_FORBIDDEN)

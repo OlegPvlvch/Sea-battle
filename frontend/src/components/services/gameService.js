@@ -8,6 +8,7 @@ export const gameService = {
   getGameList,
   createGame,
   getGameInfo,
+  joinGame,
 };
 
 function getGameList(){
@@ -33,6 +34,14 @@ function getGameInfo(id){
   return axiosInstance({
     method: 'get',
     url: `games/${id}/`,
+    headers: authHeader(),
+  })
+}
+
+function joinGame(id){
+  return axiosInstance({
+    method: 'post',
+    url: `games/${id}/join/`,
     headers: authHeader(),
   })
 }

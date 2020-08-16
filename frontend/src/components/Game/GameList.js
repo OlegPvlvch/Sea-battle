@@ -1,6 +1,7 @@
 import React from 'react';
 import Logout from '../Users/Logout';
 import { gameService } from '../services/gameService';
+import GameJoin from './GameJoin';
 
 
 export default class GameList extends React.Component{
@@ -33,11 +34,10 @@ export default class GameList extends React.Component{
         {this.state.games.map((item, index) => {
         return (
           <li key={index} className="list-group-item">
-          <button className="btn btn-outline-primary btn-block"
-            onClick={() => {window.location.assign(`room/${item.id}`)}}
-          >
-            Room: {item.id}. Size: {item.size}x{item.size}
-          </button> 
+            <GameJoin 
+              room_id={item.id} 
+              button_value={`Room ${item.id}. Size: ${item.size}x${item.size}`} 
+            />
           </li>
         )
         })}
