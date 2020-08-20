@@ -1,6 +1,5 @@
 import React from 'react';
 import Field from './Field';
-import getEmptyField from '../helpers/getEmptyField';
 import getShipSet from '../helpers/getShipSet'
 import webSocketService from '../services/webSocketService';
 import { gameService } from '../services/gameService';
@@ -10,7 +9,7 @@ export default class Game extends React.Component {
     constructor(props) {
       super(props);
       this.room_id = props.match.params.room_id;
-      this.size = 10;
+      //this.size = 10;
       this.webSocketServ = null;
       this.shipsData = [
         [1, 4, 'fourdeck'], 
@@ -31,30 +30,55 @@ export default class Game extends React.Component {
         isReady: false, 
         gameOver: false,
       };
+
+      this.getWebSocket();
+    }
+
+    getWebSocket(){
+      this.webSocketServ = new webSocketService();
+      this.webSocketServ.connect(this.room_id);
+      this.webSocketServ.socket.onmessage = (e) => {
+        this.handleMessage(JSON.parse(e.data));
+      }
     }
 
     componentDidMount(){
       gameService.getGameInfo(this.room_id)
       .then((res) => {
-          this.size = res.data.size;
-          this.setState({
-            playerField: getEmptyField(this.size),
-            enemyField: getEmptyField(this.size),
-          })
-      })
-      this.webSocketServ = new webSocketService();
-      this.webSocketServ.connect(this.room_id);
+        console.log(res.data);
+      });
+
+      setTimeout(() => {
+        if(this.webSocketServ.state() === 1) {
+          this.webSocketServ.getField();
+        }
+      }, 200);
     }
     
     componentWillUnmount(){
       this.webSocketServ.disconnect();
     }
+
+    handleMessage(data){
+      switch(data['action']){
+        case 'get_fields_data':
+          this.setState({
+            //isReady: true,
+            playerField: data['player_field'],
+            enemyField: data['enemy_field']
+          });
+          break;
+        default:
+          console.log(data);
+          break;
+      }
+    }
   
     handleClick(i, j){
       if(this.state.isReady){
-        let field = this.state.enemyField.slice();
-        if(!field[i][j].shot)
-          field[i][j].shot = true;
+        const field = this.state.enemyField.slice();
+        if(!field[i][j]['shot'])
+          field[i][j]['shot'] = true;
           this.setState({
             enemyField: field,
           })
@@ -62,17 +86,25 @@ export default class Game extends React.Component {
     }
 
     setShips(i, j){
-      this.webSocketServ.sendGameData({'message': 'hey' });
+      //this.webSocketServ.getField();
+      this.webSocketServ.sendGameData({
+        'command': 'send_data',
+        'message': 'hey'
+      })
+
       if(!this.state.isReady){
         let field = this.state.playerField.slice();
         let ships = this.state.playerShips.slice();//[ind];
         let ind = this.state.current;
 
-        if(ind > this.state.playerShips.length - 1){
-          this.setState({
-            isReady: true,
-          });
-          return;
+        if(ind >= this.state.playerShips.length - 1){
+          gameService.setField(
+            this.room_id, this.state.playerField
+          ).then(() => {
+            this.setState({
+              isReady: true,
+            });
+          })
         }
         if(field[i][j].containsShip || field[i][j].isOccupied) return;
         // if(ships[ind].matrix !== []){
@@ -92,10 +124,11 @@ export default class Game extends React.Component {
         if(this.state.playerShips[ind].matrix.length === this.state.playerShips[ind].decks){
           this.setState({
             current: ind+1,
-          })
+          });
+          console.log(ships[ind]);
         }
         
-        console.log(ships[ind]);
+        
       }
     }
   

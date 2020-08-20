@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, GameSerializer
 from .models import UserStatistic, Game, Field
+from .helpers import getEmptyField
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -52,9 +53,13 @@ class GameListView(generics.ListAPIView):
 
 class GameCreateView(views.APIView):
     def post(self, request,):
-        size = request.data.get('size')
+        size = int(request.data.get('size'))
         g = Game.objects.create(size=size)
-        Field.objects.create(user=request.user, game=g)
+        Field.objects.create(
+            user=request.user, 
+            game=g,
+            fieldmap=getEmptyField(size)
+        )
         return Response({
             "room_id" : g.id,
         })
@@ -72,7 +77,11 @@ class GameJoinView(views.APIView):
                 'error': 'You are already joined'
             }, status=status.HTTP_403_FORBIDDEN)
         if g.status == 'available':
-            Field.objects.create(user=request.user, game=g)
+            Field.objects.create(
+                user=request.user, 
+                game=g,
+                fieldmap=getEmptyField(g.size)
+            )
             g.status = 'not_available'
             g.save()
             return Response({
@@ -81,3 +90,12 @@ class GameJoinView(views.APIView):
         return Response({
             'error': 'Room is not available'
         }, status=status.HTTP_403_FORBIDDEN)
+
+# maybe delete (!)
+class UserFieldView(views.APIView):
+    def post(self, request, pk):
+        g = Game.objects.get(id=pk)
+        f = g.field_set.filter(user=request.user).first()
+        f.fieldmap = request.data.get('fieldmap')
+        f.save()
+        return Response(status=status.HTTP_200_OK)
