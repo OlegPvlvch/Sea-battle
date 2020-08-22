@@ -1,53 +1,54 @@
 import React from 'react';
 import Field from './Field';
 import getShipSet from '../helpers/getShipSet'
-import webSocketService from '../services/webSocketService';
+import { webSocketServiceInstance } from '../services/webSocketService';
 import { gameService } from '../services/gameService';
+import currentUser from '../helpers/currentUser';
 
 
 export default class Game extends React.Component {
     constructor(props) {
       super(props);
       this.room_id = props.match.params.room_id;
-      //this.size = 10;
-      this.webSocketServ = null;
+      this.webSocketServ = webSocketServiceInstance;
       this.shipsData = [
         [1, 4, 'fourdeck'], 
         [2, 3, 'threedeck'],
         [3, 2, 'twodeck'], 
         [4, 1, 'onedeck'],
       ];
-
       this.state = {
-        playerField: [],
         playerShips: getShipSet(this.shipsData),
-
-        current: 0,
-        //availableCells: [],
-        
+        playerField: [],
         enemyField: [],
-        //enemyShips: [],
+        canMove: false,
+        currentShipIndex: 0,
+        //availableCells: [],
         isReady: false, 
-        gameOver: false,
+        status: '',
       };
-
       this.getWebSocket();
     }
 
     getWebSocket(){
-      this.webSocketServ = new webSocketService();
       this.webSocketServ.connect(this.room_id);
       this.webSocketServ.socket.onmessage = (e) => {
         this.handleMessage(JSON.parse(e.data));
       }
     }
 
-    componentDidMount(){
+    getGameInfo = () => {
       gameService.getGameInfo(this.room_id)
-      .then((res) => {
-        console.log(res.data);
+      .then(res => {
+        this.setState({
+          status: res.data.status,
+        })
       });
+    }
 
+    componentDidMount(){
+      this.getGameInfo();
+      
       setTimeout(() => {
         if(this.webSocketServ.state() === 1) {
           this.webSocketServ.getField();
@@ -63,9 +64,9 @@ export default class Game extends React.Component {
       switch(data['action']){
         case 'get_fields_data':
           this.setState({
-            //isReady: true,
-            playerField: data['player_field'],
-            enemyField: data['enemy_field']
+            isReady: this.state.isReady || data['player_field']['has_ships'],
+            playerField: data['player_field']['player_fieldmap'],
+            enemyField: data['enemy_field']['enemy_fieldmap'],
           });
           break;
         default:
@@ -75,7 +76,7 @@ export default class Game extends React.Component {
     }
   
     handleClick(i, j){
-      if(this.state.isReady){
+      if(this.state.isReady && this.state.canMove){
         const field = this.state.enemyField.slice();
         if(!field[i][j]['shot'])
           field[i][j]['shot'] = true;
@@ -86,26 +87,15 @@ export default class Game extends React.Component {
     }
 
     setShips(i, j){
-      //this.webSocketServ.getField();
-      this.webSocketServ.sendGameData({
-        'command': 'send_data',
-        'message': 'hey'
-      })
-
       if(!this.state.isReady){
         let field = this.state.playerField.slice();
-        let ships = this.state.playerShips.slice();//[ind];
-        let ind = this.state.current;
+        let ships = this.state.playerShips.slice();
+        let ind = this.state.currentShipIndex;
 
         if(ind >= this.state.playerShips.length - 1){
-          gameService.setField(
-            this.room_id, this.state.playerField
-          ).then(() => {
-            this.setState({
-              isReady: true,
-            });
-          })
+          this.webSocketServ.setField(this.state.playerField);
         }
+        
         if(field[i][j].containsShip || field[i][j].isOccupied) return;
         // if(ships[ind].matrix !== []){
         //   if(ships[ind].matrix.length === 2){
@@ -123,12 +113,10 @@ export default class Game extends React.Component {
         });
         if(this.state.playerShips[ind].matrix.length === this.state.playerShips[ind].decks){
           this.setState({
-            current: ind+1,
+            currentShipIndex: ind+1,
           });
           console.log(ships[ind]);
         }
-        
-        
       }
     }
   
@@ -136,24 +124,25 @@ export default class Game extends React.Component {
       
       return (
         <div className="container">
-        <div className="row">
-          <div className="col-sm-12 col-md-12 col-lg-6">
-            <div className="game">
-              <Field whose={localStorage.getItem('User') || 'Player'} 
-                fieldMap={this.state.playerField}
-                onClick={(i, j) => this.setShips(i, j)} 
-              />
+          <h3>Status: {this.state.status}</h3><hr />
+          <div className="row">
+            <div className="col-sm-12 col-md-12 col-lg-6">
+              <div className="game">
+                <Field whose={currentUser() || 'Player'} 
+                  fieldMap={this.state.playerField}
+                  onClick={(i, j) => this.setShips(i, j)} 
+                />
+              </div>
+            </div>
+            <div className="col-sm-12 col-md-12 col-lg-6">
+              <div className="game">
+                <Field whose={"Enemy"}
+                  fieldMap={this.state.enemyField}
+                  onClick={(i, j) => this.handleClick(i, j)}
+                />
+              </div>
             </div>
           </div>
-          <div className="col-sm-12 col-md-12 col-lg-6">
-            <div className="game">
-              <Field whose={"Enemy"}
-                fieldMap={this.state.enemyField}
-                onClick={(i, j) => this.handleClick(i, j)}
-              />
-            </div>
-          </div>
-        </div>
         </div>
       );
     }

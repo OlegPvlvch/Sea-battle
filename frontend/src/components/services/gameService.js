@@ -9,7 +9,7 @@ export const gameService = {
   createGame,
   getGameInfo,
   joinGame,
-  setField,
+  // setField,
 };
 
 function getGameList(){
@@ -47,14 +47,13 @@ function joinGame(id){
   })
 }
 
-// maybe delete (!)
-function setField(game_id, fieldmap){
-  return axiosInstance({
-    method: 'post',
-    url: `games/${game_id}/set_field/`,
-    headers: authHeader(),
-    data: {
-      'fieldmap': fieldmap,
-    },
-  })
-}
+// function setField(game_id, fieldmap){
+//   return axiosInstance({
+//     method: 'post',
+//     url: `games/${game_id}/set_field/`,
+//     headers: authHeader(),
+//     data: {
+//       'fieldmap': fieldmap,
+//     },
+//   })
+// }

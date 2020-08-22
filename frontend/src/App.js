@@ -17,9 +17,7 @@ class App extends Component {
       <Router>
           {/*  component={()=><Page prop={} /> } */}
         <PrivateRoute path="/games" component={GameList} />
-
-        <PrivateRoute path="/room/:room_id" component={Game}/>
-
+        <PrivateRoute path="/game/:room_id" component={Game}/>
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
         <PrivateRoute path="/statistic" component={Statistic} />

@@ -11,8 +11,8 @@ export default class GameJoin extends React.Component{
 
   handleClick(){
     gameService.joinGame(this.room_id)
-    .then(res => {
-      window.location.assign(`room/${this.room_id}`);
+    .then(() => {
+      window.location.assign(`game/${this.room_id}`);
     })
     .catch(err => {
       alert(err.response.data.error);
