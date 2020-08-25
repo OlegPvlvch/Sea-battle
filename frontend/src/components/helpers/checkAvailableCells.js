@@ -1,49 +1,51 @@
 export default (field, x, y, ship) => {
-    let cells = [];
-    
-    let rows = [];
-    for(let i=0;i<4;i++) rows.push([]);
+  let cells = [];
+  let rows = [];
+  for(let i=0;i<4;i++) rows.push([]);
 
-    for(let i=1; i<ship.decks; i++){
+  let top_cells = rows[0], right_cells = rows[1], bottom_cells = rows[2], left_cells = rows[3];
+  for(let i=1; i<ship.decks; i++){
+    let top = field[x-i], 
+        right = field[x][y+i], 
+        bottom = field[x+i], 
+        left = field[x][y-i];
+    if(top && !top[y].containsShip && !top[y].isOccupied){
+      top_cells.push([x-i, y]);
+    }
+    if(right && !right.containsShip && !right.isOccupied){
+      right_cells.push([x, y+i]);
+    }
+    if(bottom && !bottom[y].containsShip && !bottom[y].isOccupied){
+      bottom_cells.push([x+i, y]);
+    }
+    if(left && !left.containsShip && !left.isOccupied){
+      left_cells.push([x, y-i]);
+    }
+  }
 
-        if(field[x-i] && !field[x-i][y].containsShip){
-            rows[0].push([x-i, y]);
-        }
-        if(field[x][y+i] && !field[x][y+i].containsShip){
-            rows[1].push([x, y+i]);
-        }
-        if(field[x+i] && !field[x+i][y].containsShip){
-            rows[2].push([x+i, y]);
-        }
-        if(field[x][y-i] && !field[x][y-i].containsShip){
-            rows[3].push([x, y-i]);
-        }
-        
-    }
-    console.log(rows);
-    
-    // if(ship.matrix !== []){
-    //     if(ship.decks > 1 && ship.matrix.length === 2){
-    //         ship.matrix[0][0] === ship.matrix[1][0] ? 
-    //         ship.setHorizontal(1) : ship.setHorizontal(0);
-    //     }
-    // }
+  if(ship.decks > 1 && ship.matrix.length > 1){
+    ship.matrix[0][0] === ship.matrix[1][0] ? 
+    ship.setHorizontal(1) : ship.setHorizontal(0);
+  }
 
-    if(ship.horizontal === 1){
-        cells.push(rows[1][0]);
-        cells.push(rows[3][0]);
+  if(ship.horizontal === 1){
+    cells.push(right_cells[0]);
+    cells.push(left_cells[0]);
+  }
+  else if(ship.horizontal === 0){
+    cells.push(top_cells[0]);
+    cells.push(bottom_cells[0]);
+  }
+  else{
+    if(right_cells.length+left_cells.length >= ship.decks - 1){
+      cells.push(right_cells[0]);
+      cells.push(left_cells[0]);
     }
-    else if(ship.horizontal === 0){
-        cells.push(rows[0][0]);
-        cells.push(rows[2][0]);
+    if(top_cells.length+bottom_cells.length >= ship.decks - 1){
+      cells.push(top_cells[0]);
+      cells.push(bottom_cells[0]);
     }
-    else{
-        for(let row of rows){
-            if(row.length - 1 === ship.decks - ship.matrix.length){
-                cells.push(row);
-           }
-        }
-    }
+  }
 
-    return cells;
+  return cells;
 }

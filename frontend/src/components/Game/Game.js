@@ -5,6 +5,9 @@ import { webSocketServiceInstance } from '../services/webSocketService';
 import { gameService } from '../services/gameService';
 import currentUser from '../helpers/currentUser';
 
+import checkAvailableCells from '../helpers/checkAvailableCells';
+import makeAureole from '../helpers/makeAureole';
+
 
 export default class Game extends React.Component {
     constructor(props) {
@@ -21,16 +24,16 @@ export default class Game extends React.Component {
         playerShips: getShipSet(this.shipsData),
         playerField: [],
         enemyField: [],
-        canMove: false,
+        canMove: true,
         currentShipIndex: 0,
-        //availableCells: [],
+        availableCells: [],
         isReady: false, 
         status: '',
       };
       this.getWebSocket();
     }
 
-    getWebSocket(){
+    getWebSocket = () => {
       this.webSocketServ.connect(this.room_id);
       this.webSocketServ.socket.onmessage = (e) => {
         this.handleMessage(JSON.parse(e.data));
@@ -48,10 +51,9 @@ export default class Game extends React.Component {
 
     componentDidMount(){
       this.getGameInfo();
-      
       setTimeout(() => {
         if(this.webSocketServ.state() === 1) {
-          this.webSocketServ.getField();
+          this.webSocketServ.getFieldsData();
         }
       }, 200);
     }
@@ -69,6 +71,17 @@ export default class Game extends React.Component {
             enemyField: data['enemy_field']['enemy_fieldmap'],
           });
           break;
+        case 'set_field':
+          if(this.state.isReady) this.webSocketServ.getFieldsData();
+          this.getGameInfo();
+          break;
+        case 'move':
+          let flag = data['info']['hit'];
+          this.setState({
+            canMove: data['sender'] === currentUser() ? flag : !flag,
+          });
+          this.webSocketServ.getFieldsData();
+          break;
         default:
           console.log(data);
           break;
@@ -76,13 +89,10 @@ export default class Game extends React.Component {
     }
   
     handleClick(i, j){
-      if(this.state.isReady && this.state.canMove){
-        const field = this.state.enemyField.slice();
-        if(!field[i][j]['shot'])
-          field[i][j]['shot'] = true;
-          this.setState({
-            enemyField: field,
-          })
+      if(this.state.isReady && this.state.canMove && this.state.status === 'started'){
+        if(!this.state.enemyField[i][j]['shot']){
+          this.webSocketServ.move(i,j);
+        }
       }
     }
 
@@ -91,31 +101,42 @@ export default class Game extends React.Component {
         let field = this.state.playerField.slice();
         let ships = this.state.playerShips.slice();
         let ind = this.state.currentShipIndex;
-
-        if(ind >= this.state.playerShips.length - 1){
-          this.webSocketServ.setField(this.state.playerField);
-        }
-        
+        let ship_matrix = ships[ind].matrix;
+        let ship_decks = ships[ind].decks;
+        let cells = this.state.availableCells;
         if(field[i][j].containsShip || field[i][j].isOccupied) return;
-        // if(ships[ind].matrix !== []){
-        //   if(ships[ind].matrix.length === 2){
-        //     ships[ind].matrix[0][0] === ships[ind].matrix[1][0] ? 
-        //     ships[ind].setHorizontal(1) : ships[ind].setHorizontal(0);
-        //   }
-        // }
-        ships[ind].matrix.push([i,j]);
-        // let cells = checkAvailableCells(this.state.playerField, i, j, ships[ind]);
+        if(cells.length > 0 && !cells.some((el) => el[0] === i && el[1] === j)){
+          return;
+        }
+        ship_matrix.push([i,j]);
+        cells = checkAvailableCells(
+          this.state.playerField, i, j, ships[ind]
+        ).filter(cell => cell !== undefined);
+        // console.log(cells);
+        if(ship_decks > 1 && ship_matrix.length !== ship_decks && cells.length === 0){
+          ship_matrix.pop();
+          return;
+        }
         field[i][j].containsShip = true;
         field[i][j].isVisible = true;
         this.setState({
           playerField: field,
           playerShips: ships,
+          availableCells: cells,
         });
         if(this.state.playerShips[ind].matrix.length === this.state.playerShips[ind].decks){
           this.setState({
             currentShipIndex: ind+1,
+            playerField: makeAureole(field, ships[ind]),
+            availableCells: [],
           });
-          console.log(ships[ind]);
+          // console.log(ships[ind]);
+        }
+        if(this.state.currentShipIndex >= this.state.playerShips.length - 1){
+          this.webSocketServ.setField(this.state.playerField);
+          this.setState({
+            isReady: true,
+          });
         }
       }
     }

@@ -14,6 +14,7 @@ export default function Row(props) {
           y={square.y} 
           containsShip={square.containsShip}
           isVisible={square.isVisible}
+          isOccupied={square.isOccupied}
           shot={square.shot} 
           onClick={() => props.onClick(square.x, square.y)} 
           />

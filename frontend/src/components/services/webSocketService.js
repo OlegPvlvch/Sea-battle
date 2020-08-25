@@ -27,6 +27,16 @@ class webSocketService{
     this.socket.send(JSON.stringify(data));
   }
 
+  move(i, j){
+    this.socket.send(JSON.stringify({
+      'command':'move',
+      'coords': {
+        'i': i,
+        'j': j,
+      }
+    }))
+  }
+
   setField(fieldmap){
     this.socket.send(JSON.stringify({
       'command':'set_field',
@@ -34,7 +44,7 @@ class webSocketService{
     }))
   }
 
-  getField(){
+  getFieldsData(){
     this.socket.send(JSON.stringify({
       'command':'get_fields_data'
     }))

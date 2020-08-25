@@ -2,7 +2,7 @@ import React from 'react';
 
 
 export default function Square(props){
-    const {x, y, containsShip, isVisible, shot} = props;
+    const {x, y, containsShip, isVisible, isOccupied, shot} = props;
   
     let marker;
 
@@ -14,6 +14,7 @@ export default function Square(props){
     }
     else{
       if(isVisible && containsShip) marker = '☐';
+      else if(isOccupied) marker = '#';
       else marker = '';
     }
 

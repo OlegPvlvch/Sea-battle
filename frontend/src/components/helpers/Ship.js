@@ -3,14 +3,7 @@ export default class Ship{
     this.shipname 	= fc.shipname;
     this.decks		= fc.decks;
     this.horizontal = -1;
-    this.x0			= 0;
-    this.y0			= 0;
     this.matrix		= [];
-  }
-
-  setHead(x, y){
-    this.x0 = x;
-    this.y0 = y;
   }
   setHorizontal(num){
     this.horizontal=num;

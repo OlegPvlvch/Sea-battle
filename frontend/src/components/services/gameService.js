@@ -9,7 +9,6 @@ export const gameService = {
   createGame,
   getGameInfo,
   joinGame,
-  // setField,
 };
 
 function getGameList(){
@@ -46,14 +45,3 @@ function joinGame(id){
     headers: authHeader(),
   })
 }
-
-// function setField(game_id, fieldmap){
-//   return axiosInstance({
-//     method: 'post',
-//     url: `games/${game_id}/set_field/`,
-//     headers: authHeader(),
-//     data: {
-//       'fieldmap': fieldmap,
-//     },
-//   })
-// }

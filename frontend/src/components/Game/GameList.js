@@ -1,5 +1,5 @@
 import React from 'react';
-import Logout from '../Users/Logout';
+import TopPanel from './TopPanel';
 import { gameService } from '../services/gameService';
 import GameJoin from './GameJoin';
 
@@ -24,9 +24,7 @@ export default class GameList extends React.Component{
   render(){
   return (
     <div>
-    <a className="btn" href="/game_create">Create game</a>
-    <Logout />
-    <hr />
+    <TopPanel />
     <div className="row">
       <div className="cols-sm-2 col-md-3"></div>
       <div className="col-xs-12 col-sm-8 col-md-6">
