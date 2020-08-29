@@ -4,6 +4,7 @@ import Square from './Square'
 
 export default function Row(props) {
   const { row } = props;
+  
   return (
     <div className=".board-row">
       {row.map((square, index) => {

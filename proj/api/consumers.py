@@ -1,8 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-from api.models import Game
-from asgiref.sync import sync_to_async
-from .helpers import is_member, get_fields
+from .helpers import (
+    is_member, make_move, get_fields, set_field, first_move, get_status
+)
 
 
 class GameConsumer(AsyncWebsocketConsumer):
@@ -22,7 +22,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_id, self.channel_name
         )
     
-    async def get_fields_data(self, room_id):
+    async def get_fields_data(self, data):
         fields = await get_fields(self.room_id, self.scope['user'])
         await self.send(text_data=json.dumps({
             'action':'get_fields_data',
@@ -30,30 +30,48 @@ class GameConsumer(AsyncWebsocketConsumer):
             'enemy_field':fields['enemy_field'],
         }))
 
-    async def send_data(self, data):
-        await self.channel_layer.group_send(
-            self.room_id,{
-                "type": "game.message",
-                "sender": self.scope["user"].username,
-                "data": data,
-            }
-        )
-
+    async def set_field(self, data):
+        await set_field(self.room_id, self.scope['user'], data['fieldmap'])
+        if await get_status(self.room_id) == 'started':
+            await self.start_game()
+        await self.send_action_message('set_field')
+    
+    async def move(self, data):
+        move_data = await make_move(self.room_id, self.scope['user'], data)
+        await self.send_action_message('move')
+        if move_data['is_won']:
+            await self.end_game()
+    
+    async def start_game(self):
+        await first_move(self.room_id)
+        await self.send_action_message('move')
+    
+    async def end_game(self):
+        await self.send_action_message('end_game')
+    
     commands = {
         'get_fields_data': get_fields_data,
-        'send_data': send_data,
+        'set_field': set_field,
+        'move': move,
     }
     
     async def receive(self, text_data):
         data = json.loads(text_data)
         await self.commands[data['command']](self, data)
-        
-        # await self.send(text_data=json.dumps({
-        #     'ssss':'sss'
-        # }))
     
-    async def game_message(self, event):
+    async def send_action_message(self, action, info={}):
+        await self.channel_layer.group_send(
+            self.room_id,{
+                "type":"action.message",
+                "action":action,
+                "sender":self.scope['user'].username,
+                "info":info,
+            }
+        )
+    
+    async def action_message(self, event):
         await self.send(text_data=json.dumps({
+            "action": event["action"],
             "sender" : event["sender"],
-            "data" : event["data"],
+            "info" : event["info"],
         }))

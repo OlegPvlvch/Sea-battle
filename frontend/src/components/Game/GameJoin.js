@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import { gameService } from '../services/gameService';
 
 
@@ -21,11 +22,9 @@ export default class GameJoin extends React.Component{
 
   render(){
     return (
-      <button className="btn btn-outline-dark btn-block"
-        onClick={() => this.handleClick()}
-      >
+      <Button variant="outline-dark" onClick={() => this.handleClick()} block>
         {this.button_value}
-      </button>
+      </Button>
     )
   }
 }

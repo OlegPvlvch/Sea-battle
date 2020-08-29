@@ -1,7 +1,7 @@
 from rest_framework import serializers
 #from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from .models import UserStatistic, Game
+from .models import Game
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,7 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
-        UserStatistic.objects.create(user=user)
         return user
 
 class GameSerializer(serializers.ModelSerializer):

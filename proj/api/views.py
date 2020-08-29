@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, GameSerializer
-from .models import UserStatistic, Game, Field
+from .models import Game, Field
 from .helpers import getEmptyField
 
 
@@ -21,7 +21,10 @@ class LoginView(views.APIView):
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
         if user:
-            Token.objects.create(user=user)
+            try:
+                Token.objects.create(user=user)
+            except:
+                return Response(status=status.HTTP_403_FORBIDDEN)
             return Response({
                 "user": user.username,
                 "token": user.auth_token.key,
@@ -36,11 +39,14 @@ class LogoutView(views.APIView):
 
 class StatisticView(views.APIView):
     def get(self, request,):
-        user_stat = UserStatistic.objects.get(user=request.user)
+        fields = Field.objects.filter(
+            game__in=Game.objects.filter(status='ended'),
+            user=request.user,
+        )
         return Response({
-            "username": user_stat.user.username,
-            "games_count": user_stat.games_count,
-            "wins_count": user_stat.wins_count
+            "username": request.user.username,
+            "games_count": len(fields),
+            "wins_count": len(fields.filter(has_ships=True))
         })
 
 class GameListView(generics.ListAPIView):
@@ -50,6 +56,9 @@ class GameListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = self.model.objects.filter(status="available")
         return queryset
+        
+class UserGameListView(generics.ListAPIView):
+    pass
 
 class GameCreateView(views.APIView):
     def post(self, request,):
@@ -72,30 +81,18 @@ class GameJoinView(views.APIView):
     def post(self, request, pk,):
         g = Game.objects.get(id=pk)
         f = g.field_set.filter(user=request.user).first()
-        if f:
-            return Response({
-                'error': 'You are already joined'
-            }, status=status.HTTP_403_FORBIDDEN)
         if g.status == 'available':
-            Field.objects.create(
-                user=request.user, 
-                game=g,
-                fieldmap=getEmptyField(g.size)
-            )
-            g.status = 'not_available'
-            g.save()
+            if not f:
+                Field.objects.create(
+                    user=request.user, 
+                    game=g,
+                    fieldmap=getEmptyField(g.size)
+                )
+                g.status = 'preparing'
+                g.save()
             return Response({
                 "room_id": g.id,
             })
         return Response({
-            'error': 'Room is not available'
+            'error': 'Game is not available'
         }, status=status.HTTP_403_FORBIDDEN)
-
-# maybe delete (!)
-class UserFieldView(views.APIView):
-    def post(self, request, pk):
-        g = Game.objects.get(id=pk)
-        f = g.field_set.filter(user=request.user).first()
-        f.fieldmap = request.data.get('fieldmap')
-        f.save()
-        return Response(status=status.HTTP_200_OK)

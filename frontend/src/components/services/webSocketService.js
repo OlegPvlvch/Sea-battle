@@ -1,4 +1,4 @@
-class webSocketService{
+export default class webSocketService{
   constructor(){
     this.socket = null;
     this.ws_api_url = "ws://127.0.0.1:8000/ws/";
@@ -54,5 +54,3 @@ class webSocketService{
     return this.socket.readyState;
   }
 }
-
-export const webSocketServiceInstance = new webSocketService();

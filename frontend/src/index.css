@@ -1,6 +1,11 @@
+html, body {
+  height: 100%;
+}
+
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
-  margin: 20px;
+  margin: 10px;
+  min-width: 508px;
 }
 
 ol, ul {
@@ -18,7 +23,7 @@ ol, ul {
 }
 
 .square {
-  background: #fff;
+  background: rgb(149, 210, 235);
   border: 1px solid #999;
   float: left;
   font-size: 24px;
@@ -32,6 +37,15 @@ ol, ul {
   width: 34px;
 }
 
+.square-ship-alive{
+  background: rgb(84, 85, 85);
+}
+
+.square-occupied{
+  /* background: rgb(209, 211, 211); */
+  background: rgb(80, 191, 235);
+}
+
 .square:focus {
   outline: none;
 }
@@ -43,8 +57,28 @@ ol, ul {
 .game {
   display: flex;
   flex-direction: row;
+  margin: 10px;
 }
 
 .game-info {
   margin-left: 20px;
+}
+
+.page-holder {
+  min-height: 100vh;
+}
+
+.bg-cover {
+  background-size: cover !important;
+}
+
+.centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.game-container{
+  border: 1px solid rgb(176, 218, 218);
 }
