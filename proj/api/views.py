@@ -62,7 +62,12 @@ class UserGameListView(generics.ListAPIView):
 
 class GameCreateView(views.APIView):
     def post(self, request,):
-        size = int(request.data.get('size'))
+        try:
+            size = int(request.data.get('size'))
+        except TypeError:
+            return Response({
+                'error':'Room needs a size'
+            },status.HTTP_400_BAD_REQUEST)
         g = Game.objects.create(size=size)
         Field.objects.create(
             user=request.user, 
@@ -71,7 +76,7 @@ class GameCreateView(views.APIView):
         )
         return Response({
             "room_id" : g.id,
-        })
+        }, status=status.HTTP_201_CREATED)
 
 class GameRetrieveView(generics.RetrieveAPIView):
     queryset = Game.objects.all()
