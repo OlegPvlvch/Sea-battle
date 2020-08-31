@@ -8,6 +8,7 @@ from rest_framework.test import APIClient
 from api.serializers import GameSerializer
 import json
 
+
 client = APIClient()
 
 def get_loggen_in():

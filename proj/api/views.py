@@ -39,14 +39,19 @@ class LogoutView(views.APIView):
 
 class StatisticView(views.APIView):
     def get(self, request,):
-        fields = Field.objects.filter(
+        all_fields_count = Field.objects.filter(
             game__in=Game.objects.filter(status='ended'),
             user=request.user,
-        )
+        ).count()
+        won_fields_count = Field.objects.filter(
+            game__in=Game.objects.filter(status='ended'),
+            user=request.user,
+            has_ships=True,
+        ).count()
         return Response({
             "username": request.user.username,
-            "games_count": len(fields),
-            "wins_count": len(fields.filter(has_ships=True))
+            "games_count": all_fields_count,
+            "wins_count": won_fields_count,
         })
 
 class GameListView(generics.ListAPIView):
