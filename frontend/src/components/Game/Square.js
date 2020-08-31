@@ -18,7 +18,7 @@ export default function Square(props){
       if(isVisible && containsShip){
         containsShipClass = 'square-ship-alive';
       }
-      else if(isOccupied) marker = '#';//containsShipClass = 'square-occupied';
+      else if(isOccupied) containsShipClass = 'square-occupied';//marker = '#';
       else marker = '';
     }
 

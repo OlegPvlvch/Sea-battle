@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { userService } from '../services/userService';
+import { Container, Row, Col } from 'react-bootstrap';
 
 
 export default class Register extends React.Component{
@@ -54,34 +55,40 @@ export default class Register extends React.Component{
 
   render(){
     return(
-      <div className="cos-xs-12 col-sm-10 col-md-6">
-        {this.state.registerSuccess ? (
-        <Redirect to='/login' />
-        ) : (
-        <div>
-        <h4>Sign up</h4><hr />
-        <p>{this.state.error}</p>
-        <form onSubmit={(e) => this.handleSubmit(e)}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input type="text" className="form-control" name="username" onChange={(e) => this.handleChange(e)} required></input>
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input type="password" className="form-control" name="password" onChange={(e) => this.handleChange(e)} required></input>
-          </div>
-          <div className="form-group">
-            <label htmlFor="password2">Confirm password</label>
-            <input type="password" className="form-control" name="password2" onChange={(e) => this.handleChange(e)} required></input>
-          </div>
-          <div className="form-group">
-            <button className="btn btn-primary">Sign up</button>
-          </div>
-        </form>
-        <Link to="/login">Already have an account?</Link>
-        </div>
-        )}
-      </div>
+      <Container>
+        <Row>
+          <Col xs={0} sm={2} md={3} lg={3}></Col>
+          <Col xs={12} sm={10} md={6} lg={6}>
+            {this.state.registerSuccess ? (
+            <Redirect to='/login' />
+            ) : (
+            <div>
+            <h4>Sign up</h4><hr />
+            <p>{this.state.error}</p>
+            <form onSubmit={(e) => this.handleSubmit(e)}>
+              <div className="form-group">
+                <label htmlFor="username">Username</label>
+                <input type="text" className="form-control" name="username" onChange={(e) => this.handleChange(e)} required></input>
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input type="password" className="form-control" name="password" onChange={(e) => this.handleChange(e)} required></input>
+              </div>
+              <div className="form-group">
+                <label htmlFor="password2">Confirm password</label>
+                <input type="password" className="form-control" name="password2" onChange={(e) => this.handleChange(e)} required></input>
+              </div>
+              <div className="form-group">
+                <button className="btn btn-primary">Sign up</button>
+              </div>
+            </form>
+            <Link to="/login">Already have an account?</Link>
+            </div>
+            )}
+          </Col>
+          <Col xs={0} sm={2} md={3} lg={3}></Col>
+        </Row>
+      </Container>
     );
   }
 }

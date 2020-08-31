@@ -15,13 +15,15 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Route exact path="/" component={IntroPage} />
-        <PrivateRoute exact path="/games" component={GameList} />
-        <PrivateRoute path="/game/:room_id" component={Game}/>
-        <Route path="/register" component={Register} />
-        <Route path="/login" component={Login} />
-        <PrivateRoute path="/statistic" component={Statistic} />
-        <PrivateRoute path="/game_create" component={GameCreate} />
+        <div>
+          <Route exact path="/" component={IntroPage} />
+          <PrivateRoute exact path="/games" component={GameList} />
+          <PrivateRoute path="/game/:room_id" component={Game}/>
+          <Route path="/register" component={Register} />
+          <Route path="/login" component={Login} />
+          <PrivateRoute path="/statistic" component={Statistic} />
+          <PrivateRoute path="/game_create" component={GameCreate} />
+        </div>
       </Router>
     );
   }

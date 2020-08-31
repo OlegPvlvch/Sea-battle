@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import Field from './Field';
 import getShipSet from '../helpers/getShipSet'
 import webSocketService from '../services/webSocketService';
@@ -48,8 +49,8 @@ export default class Game extends React.Component {
         this.setState({
           status: status,
           isEnded: status === 'ended',
-        })
-      })
+        });
+      });
     }
 
     componentDidMount(){
@@ -95,7 +96,7 @@ export default class Game extends React.Component {
           this.setState({
             canMove: false,
             isEnded: true,
-            info: `Winner: ${data['sender']}`
+            info: data['sender'] === currentUser() ? 'You won!' : 'You lose.',
           });
           break;
         default:
@@ -161,32 +162,33 @@ export default class Game extends React.Component {
     render(){
       
       return (
-        <div className="container game-container">
+        <Container className="game-container">
           <h3>Status: {this.state.status}</h3><hr />
           {this.state.info ? (
             <h5>{this.state.info}</h5>
           ) : (
             ''
           )}
-          <div className="row">
-            <div className="col-sm-12 col-md-12 col-lg-6">
+          <hr />
+          <Row>
+            <Col sm={12} md={12} lg={6}>
               <div className="game">
                 <Field whose={currentUser() || 'Player'} 
                   fieldMap={this.state.playerField}
                   onClick={(i, j) => this.setShips(i, j)} 
                 />
               </div>
-            </div>
-            <div className="col-sm-12 col-md-12 col-lg-6">
+            </Col>
+            <Col sm={12} md={12} lg={6}>
               <div className="game">
                 <Field whose={"Enemy"}
                   fieldMap={this.state.enemyField}
                   onClick={(i, j) => this.handleClick(i, j)}
                 />
               </div>
-            </div>
-          </div>
-        </div>
+            </Col>
+          </Row>
+        </Container>
       );
     }
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 import { userService } from '../services/userService';
+import { Container, Row, Col } from 'react-bootstrap';
+import TopPanel from '../Game/TopPanel';
 
 
 export default class Statistic extends React.Component{
@@ -25,13 +27,18 @@ export default class Statistic extends React.Component{
 
   render(){
     return (
-      <div className="row">
-        <div className="col">
-        <h3>{this.state.username}</h3> <hr />
-        <p>Games: {this.state.games_count}</p>
-        <p>Wins: {this.state.wins_count}</p>
-        </div>
-      </div>
+      <Container>
+        <TopPanel />
+        <Row>
+          <Col xs={1}></Col>
+          <Col>
+              <h2>Your statistic, {this.state.username}.</h2> <hr />
+              <h4>Games: {this.state.games_count}</h4>
+              <h4>Wins: {this.state.wins_count}</h4>
+          </Col>
+          <Col xs={1}></Col>
+        </Row>
+      </Container>
     )
   }
 }

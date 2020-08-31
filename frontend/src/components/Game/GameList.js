@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Row, Col, ListGroup } from 'react-bootstrap';
 import TopPanel from './TopPanel';
 import { gameService } from '../services/gameService';
 import GameJoin from './GameJoin';
@@ -23,27 +24,27 @@ export default class GameList extends React.Component{
 
   render(){
   return (
-    <div>
-    <TopPanel />
-    <div className="row">
-      <div className="cols-sm-2 col-md-3"></div>
-      <div className="col-xs-12 col-sm-8 col-md-6">
-      <ul className="list-group">
-        {this.state.games.map((item, index) => {
-        return (
-          <li key={index} className="list-group-item">
-            <GameJoin 
-              room_id={item.id} 
-              button_value={`Room ${item.id}. Size: ${item.size}x${item.size}`} 
-            />
-          </li>
-        )
-        })}
-      </ul>
-      </div>
-      <div className="cols-sm-2 col-md-3"></div>
-    </div>
-    </div>
+    <Container>
+      <TopPanel />
+      <Row>
+        <Col sm={1} md={2}></Col>
+        <Col xs={12} sm={10} md={8}>
+          <ListGroup>
+            {this.state.games.map((item, index) => {
+            return (
+              <ListGroup.Item variant="dark" key={index}>
+                <GameJoin 
+                  room_id={item.id} 
+                  button_value={`Room ${item.id}. Size: ${item.size}x${item.size}`} 
+                />
+              </ListGroup.Item>
+            )
+            })}
+          </ListGroup>
+        </Col>
+        <Col sm={1} md={2}></Col>
+      </Row>
+    </Container>
   )
   }
 }

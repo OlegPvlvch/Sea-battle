@@ -1,12 +1,14 @@
 import React from 'react';
 import Logout from '../Users/Logout';
+import { Button } from 'react-bootstrap';
 
 
-export default function TopPanel(props){
+export default function TopPanel(){
   return (
     <div>
-      <a className="btn" href="/game_create">Create game</a>
-      <a className="btn" href="/statistic">Statistic</a>
+      <Button variant="link" href={"/games"}>Games</Button>
+      <Button variant="link" href={"/game_create"}>Create game</Button>
+      <Button variant="link" href={"/statistic"}>Statistic</Button>
       <Logout />
       <hr />
     </div>

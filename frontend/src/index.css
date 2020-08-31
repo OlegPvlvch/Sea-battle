@@ -23,7 +23,7 @@ ol, ul {
 }
 
 .square {
-  background: rgb(149, 210, 235);
+  background: rgb(80, 191, 235);
   border: 1px solid #999;
   float: left;
   font-size: 24px;
@@ -43,7 +43,7 @@ ol, ul {
 
 .square-occupied{
   /* background: rgb(209, 211, 211); */
-  background: rgb(80, 191, 235);
+  background: rgb(149, 210, 235);
 }
 
 .square:focus {
@@ -66,17 +66,14 @@ ol, ul {
 
 .page-holder {
   min-height: 100vh;
-}
-
-.bg-cover {
-  background-size: cover !important;
+  background: rgb(7, 171, 221);
 }
 
 .centered {
   position: fixed;
-  top: 50%;
+  top: 25%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -25%);
 }
 
 .game-container{
