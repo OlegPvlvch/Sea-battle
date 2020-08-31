@@ -3,12 +3,6 @@ import { Button, Alert } from 'react-bootstrap';
 
 
 export default class IntroPage extends React.Component{
-  // constructor(props){
-  //   super(props);
-  //   this.style = {
-  //     backgroundImage: "url('https://www.zastavki.com/pictures/originals/2014/Ships_Night_sea_battle_080267_.jpg')"
-  //   }
-  // }
 
   handleClick = () => {
     window.location.assign('/games');
